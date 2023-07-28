@@ -1,0 +1,4 @@
+.theia
+node_modules
+dist
+target
