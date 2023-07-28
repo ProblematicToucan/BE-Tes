@@ -1,0 +1,1 @@
+export const queryAuth = "SELECT * FROM public.user WHERE username=$1 AND password=$2";

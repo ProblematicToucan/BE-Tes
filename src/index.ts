@@ -3,8 +3,11 @@ import cors from 'cors';
 import compression from 'compression';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import * as dotenv from 'dotenv';
 
 import route from './routes'
+
+dotenv.config();
 
 const app = express();
 const port = parseInt(process.env.PORT || '3000', 10);
@@ -24,4 +27,4 @@ app.get('/', (req, res) => {
     res.send('API already on air 🚀')
 });
 
-app.use('/api/v1/users', route);
+app.use('/api/v1', route);
