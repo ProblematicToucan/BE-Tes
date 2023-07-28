@@ -4,6 +4,8 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
+import route from './routes'
+
 const app = express();
 const port = parseInt(process.env.PORT || '3000', 10);
 
@@ -19,5 +21,7 @@ app.listen(port, () => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Shot API already on air 🚀')
+    res.send('API already on air 🚀')
 });
+
+app.use('/api/v1/users', route);
