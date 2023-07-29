@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv';
 
-import route from './routes'
+import route from './route/routes'
 
 dotenv.config();
 

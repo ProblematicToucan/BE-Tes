@@ -1,1 +1,0 @@
-export const queryGetUsers = "SELECT * FROM public.user";
