@@ -61,7 +61,7 @@ class AuthController {
 
             const userValues = [fullname, username, password];
             const user = await pool.query(queryAddUser, userValues);
-            res.status(201).json({ created: user });
+            res.status(201).json({ created: { fullname, username } });
         } catch (error) {
             res.status(500).json({ error: 'Internal server error', log: error });
         }
