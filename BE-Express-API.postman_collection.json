@@ -200,7 +200,7 @@
 										"disableEdit": true,
 										"previewSettingsLink": "Go to authorization",
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6ImdhbWFsIiwiaWF0IjoxNjkwNjA2ODQ3LCJleHAiOjE2OTA2NDI4NDd9.EJUeWHsNyfFk59hgWyD6ZNSrHqEy6XAnZDMG1886s7U",
+										"value": "Bearer ",
 										"system": true,
 										"auth": true,
 										"type": "text"
