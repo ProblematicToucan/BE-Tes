@@ -3,8 +3,8 @@ import { IAuthenticatedRequest } from "../../middleware/Authorization";
 import pool from "../../db/Database";
 import { IUpdateRuas, ICreateRuas } from "../../models/RuasModel";
 
-const queryGetRuas = "SELECT * FROM public.ruas";
-const queryGetRuasCoord = "SELECT * FROM public.ruas_coordinates";
+const queryGetRuas = "SELECT * FROM public.ruas LIMIT $1 OFFSET $2";
+const queryGetRuasCoord = "SELECT * FROM public.ruas_coordinates WHERE ruas_id = ANY($1)";
 const queryGetRuasById = "SELECT * FROM public.ruas WHERE id = $1";
 const queryGetRuasCoordByRuasId = "SELECT * FROM public.ruas_coordinates WHERE ruas_id = $1";
 const queryAddRuas = "INSERT INTO public.ruas (ruas, km_awal, km_akhir, status, created_by, updated_by, created_at, updated_at) VALUES ($1, $2, $3, true, $4, $4, NOW(), NOW()) RETURNING id";
@@ -16,9 +16,15 @@ const deleteRuasQuery = 'DELETE FROM public.ruas WHERE id = $1';
 
 class GisController {
     static async getRuasTol(req: IAuthenticatedRequest, res: Response) {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const offset = (page - 1) * limit;
+
         try {
-            const { rows: ruas } = await pool.query(queryGetRuas);
-            const { rows: ruasCoordinates } = await pool.query(queryGetRuasCoord);
+            const { rows: ruas } = await pool.query(queryGetRuas, [limit, offset]);
+            // Extract ruas id untuk memfilter query ruas_coordinates
+            const ruasIds = ruas.map((ruasData) => ruasData.id);
+            const { rows: ruasCoordinates } = await pool.query(queryGetRuasCoord, [ruasIds]);
 
             // Mengelompokkan data ruas_coordinates berdasarkan ruas_id menggunakan objek dictionary
             const ruasCoordinatesMap = ruasCoordinates.reduce((acc, cur) => {
