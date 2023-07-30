@@ -9,10 +9,11 @@ JWT_PRIVATE_KEY = SOME-RANDOM-KEY
 JWT_REFRESH_KEY = ALSO-SOME-RANDOM-KEY
 ```
 
-Pengaturan database PostgreSQL config -> [Database.ts](src/db/Database.ts).
+Pengaturan database projek ini (PostgreSQL) dapat dilihat pada -> [`src/db/Database.ts`](src/db/Database.ts).
 
 
-Skema publik database yang digunakan -> [Database.sql](Database.sql).
+Projek ini meggunakan PostgreSQL pre-define schema `public`. Skema database yang digunakan dapat dilihat pada -> [`Database.sql`](Database.sql).
 
 Untuk menjalankan project, gunakan perintah `npm run dev`.
 
+Postman collection untuk semua endpoints dapat ditemukan pada [`BE-Express-API.postman_collection.json`](BE-Express-API.postman_collection.json).
