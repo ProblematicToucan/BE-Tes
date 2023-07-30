@@ -12,7 +12,7 @@ JWT_REFRESH_KEY = ALSO-SOME-RANDOM-KEY
 Pengaturan database projek ini (PostgreSQL) dapat dilihat pada -> [`src/db/Database.ts`](src/db/Database.ts).
 
 
-Projek ini meggunakan PostgreSQL pre-define schema `public`. Skema database yang digunakan dapat dilihat pada -> [`Database.sql`](Database.sql).
+Projek ini meggunakan PostgreSQL pre-define schema `public`. Skema tabel yang digunakan dalam project ini dapat dilihat pada -> [`Database.sql`](Database.sql).
 
 Untuk menjalankan project, gunakan perintah `npm run dev`.
 
