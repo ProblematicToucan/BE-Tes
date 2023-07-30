@@ -1,21 +1,26 @@
 import { Response } from "express";
 import { IAuthenticatedRequest } from "../../middleware/Authorization";
 import pool from "../../db/Database";
-import { IUpdateRuasCoord, IUpdateRuas, ICreateRuas } from "../../models/RuasModel";
+import { IUpdateRuas, ICreateRuas } from "../../models/RuasModel";
 
 const queryGetRuas = "SELECT * FROM public.ruas";
 const queryGetRuasCoord = "SELECT * FROM public.ruas_coordinates";
 const queryGetRuasById = "SELECT * FROM public.ruas WHERE id = $1";
 const queryGetRuasCoordByRuasId = "SELECT * FROM public.ruas_coordinates WHERE ruas_id = $1";
+const queryAddRuas = "INSERT INTO public.ruas (ruas, km_awal, km_akhir, status, created_by, updated_by, created_at, updated_at) VALUES ($1, $2, $3, true, $4, $4, NOW(), NOW()) RETURNING id";
+const queryAddRuasCoord = "INSERT INTO public.ruas_coordinates (ruas_id, coordinates, created_by, updated_by, created_at, updated_at) VALUES ($1, $2, $3, $3, NOW(), NOW())";
+const queryUpdateRuas = 'UPDATE public.ruas SET ruas = $1, km_awal = $2, km_akhir = $3, status = $4, updated_by = $5, updated_at = NOW() WHERE id = $6';
+const queryUpdateRuasCoord = 'UPDATE public.ruas_coordinates SET coordinates = $1, updated_by = $2, updated_at = NOW() WHERE id = $3';
+const deleteRuasCoordQuery = 'DELETE FROM public.ruas_coordinates WHERE ruas_id = $1';
+const deleteRuasQuery = 'DELETE FROM public.ruas WHERE id = $1';
 
 class GisController {
     static async getRuasTol(req: IAuthenticatedRequest, res: Response) {
         try {
-            // const allRuas = await pool.query(queryGetRuas);
             const { rows: ruas } = await pool.query(queryGetRuas);
             const { rows: ruasCoordinates } = await pool.query(queryGetRuasCoord);
 
-            // Mengelompokkan data ruas_coordinates berdasarkan ruas_id menggunakan objek kamus
+            // Mengelompokkan data ruas_coordinates berdasarkan ruas_id menggunakan objek dictionary
             const ruasCoordinatesMap = ruasCoordinates.reduce((acc, cur) => {
                 const ruasId = cur.ruas_id;
                 if (!acc[ruasId]) {
@@ -69,13 +74,11 @@ class GisController {
         const { ruas, km_awal, km_akhir, coordinates }: ICreateRuas = req.body;
 
         try {
-            const queryAddRuas = "INSERT INTO public.ruas (ruas, km_awal, km_akhir, status, created_by, updated_by, created_at, updated_at) VALUES ($1, $2, $3, true, $4, $4, NOW(), NOW()) RETURNING id";
             const { rows } = await pool.query(queryAddRuas, [ruas, km_awal, km_akhir, req.user.username]);
             const ruasId = rows[0].id;
             console.log(ruasId);
 
             for (const coord of coordinates) {
-                const queryAddRuasCoord = "INSERT INTO public.ruas_coordinates (ruas_id, coordinates, created_by, updated_by, created_at, updated_at) VALUES ($1, $2, $3, $3, NOW(), NOW())";
                 await pool.query(queryAddRuasCoord, [ruasId, coord.coordinates, req.user.username])
             }
 
@@ -97,13 +100,11 @@ class GisController {
             }
 
             // Update data "ruas" di database
-            const updateRuasQuery = 'UPDATE public.ruas SET ruas = $1, km_awal = $2, km_akhir = $3, status = $4, updated_by = $5, updated_at = NOW() WHERE id = $6';
-            await pool.query(updateRuasQuery, [ruas, km_awal, km_akhir, status, req.user.username, ruasId]);
+            await pool.query(queryUpdateRuas, [ruas, km_awal, km_akhir, status, req.user.username, ruasId]);
 
             // // Update data "ruas_coordinates" yang baru ke database
-            const insertRuasCoordQuery = 'UPDATE public.ruas_coordinates SET coordinates = $1, updated_by = $2, updated_at = NOW() WHERE id = $3';
             for (const coord of coordinates) {
-                await pool.query(insertRuasCoordQuery, [coord.coordinates, req.user.username, coord.id]);
+                await pool.query(queryUpdateRuasCoord, [coord.coordinates, req.user.username, coord.id]);
             }
 
             res.status(204).json('ok');
@@ -116,21 +117,19 @@ class GisController {
         const id = parseInt(req.params.id, 10);
         try {
             // Hapus data "ruas_coordinates" yang terkait dengan ruas tersebut di database
-            const deleteRuasCoordQuery = 'DELETE FROM public.ruas_coordinates WHERE ruas_id = $1';
             await pool.query(deleteRuasCoordQuery, [id]);
-        
+
             // Hapus data "ruas" di database
-            const deleteRuasQuery = 'DELETE FROM public.ruas WHERE id = $1';
             const result = await pool.query(deleteRuasQuery, [id]);
-        
+
             if (result.rowCount === 0) {
-              return res.status(404).json({ error: 'Ruas not found' });
+                return res.status(404).json({ error: 'Ruas not found' });
             }
-        
+
             res.status(200).json({ message: 'Data ruas deleted successfully' });
-          } catch (error) {
+        } catch (error) {
             res.status(500).json({ error: 'Internal server error', log: error });
-          }
+        }
     }
 }
 
