@@ -26,4 +26,5 @@ Proyek ini memiliki 2 jenis endpoint:
 1. Public Endpoint: Digunakan untuk login dan register.
 2. Authenticated Endpoint: Digunakan untuk operasi CRUD terkait state.
 
+Metode autentikasi menggunakan JWT.
 Pastikan telah login dan mendapatkan token untuk mengakses authenticated endpoint.
