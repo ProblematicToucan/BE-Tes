@@ -7,13 +7,13 @@
 Clone repo -> jalankan perintah `npm install` -> buat *.env* file pada *root* folder yang berisi
 
 ```bash
-JWT_PRIVATE_KEY = SOME-RANDOM-KEY
-JWT_REFRESH_KEY = ALSO-SOME-RANDOM-KEY
+JWT_PRIVATE_KEY = SOME-PRIVATE-KEY
+JWT_REFRESH_KEY = ALSO-SOME-PRIVATE-KEY
 ```
 
 Pengaturan database projek ini (PostgreSQL) dapat dilihat pada -> [`src/db/Database.ts`](src/db/Database.ts).
 
-Projek ini meggunakan PostgreSQL pre-define schema `public`. Skema database yang digunakan dapat dilihat pada -> [`Database.sql`](Database.sql).
+Projek ini meggunakan PostgreSQL pre-define schema `public`. Skema tabel yang digunakan dalam projek ini dapat dilihat pada -> [`Database.sql`](Database.sql).
 
 Untuk menjalankan project, gunakan perintah `npm run dev`.
 
