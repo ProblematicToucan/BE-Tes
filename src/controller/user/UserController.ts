@@ -1,16 +1,17 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import pool from '../../db/Database';
 import xlsx from 'xlsx';
 import { IAuthenticatedRequest } from '../../middleware/Authorization';
-import { ICreateUser, insertUser } from '../../utils/DatabaseHelper';
+import { addUser } from '../../utils/DatabaseHelper';
+import { ICreateUser } from '../../models/UserModel';
 
 const queryGetUsers = "SELECT * FROM public.user";
 
 class UserController {
     static async getUsers(req: IAuthenticatedRequest, res: Response) {
         try {
-            const users = await pool.query(queryGetUsers);
-            res.status(200).json({ users: users.rows, user: req.user });
+            const { rows: users } = await pool.query(queryGetUsers);
+            res.status(200).json({ users: users });
         } catch (error) {
             res.status(500).json({ error: 'Internal server error', log: error });
         }
@@ -33,10 +34,10 @@ class UserController {
                 const username = Username;
                 const password = Password;
                 return { fullname, username, password } as ICreateUser;
-              });
+            });
 
             for (const user of data) {
-                await insertUser(user, req.user.username, req.user.username);
+                await addUser(user, req.user.username, req.user.username);
             }
             res.status(201).json({ message: 'user imported' });
         } catch (error) {

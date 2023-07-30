@@ -1,7 +1,8 @@
 import { Request, Response, response } from 'express';
 import pool from '../../db/Database';
 import { jwtToken, jwtVerify } from '../../utils/JwtHelper';
-import { ICreateUser, checkExistingUser, insertUser, updateLoginTimestamp } from '../../utils/DatabaseHelper';
+import { checkExistingUser, addUser, updateLoginTimestamp } from '../../utils/DatabaseHelper';
+import { ICreateUser } from '../../models/UserModel';
 
 const queryAuth = "SELECT * FROM public.user WHERE username=$1 AND password=$2";
 
@@ -67,7 +68,7 @@ class AuthController {
                 password,
             };
 
-            await insertUser(user, 'register', user.username);
+            await addUser(user, 'register', user.username);
             res.status(201).json({ message: 'user created' });
         } catch (error) {
             res.status(500).json({ error: 'Internal server error', log: error });

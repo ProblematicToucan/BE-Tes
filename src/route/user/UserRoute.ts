@@ -5,7 +5,7 @@ import multer from 'multer';
 
 // end point /users
 const userRouter = Router();
-const upload = multer({dest: __dirname + '/uploads'});
+const upload = multer({ dest: __dirname + '/uploads' });
 
 userRouter.get('/', authenticateToken, UserController.getUsers);
 userRouter.post('/import', authenticateToken, upload.single('file'), UserController.importUsers);
